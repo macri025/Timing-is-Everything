@@ -1,6 +1,6 @@
 ## Timing-is-Everything
 Scripts used in the BSc Hons thesis Timing is Everything: Circadian regulation and the heading response in temperate grasses. \
-\
+
 # Script Navigation
 Batch scripts for RNAseq data processing: BAM, featurecounts, Genome download, QC \
 \
