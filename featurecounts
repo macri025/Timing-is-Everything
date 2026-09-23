@@ -1,0 +1,18 @@
+Initial directory: /projects/health_sciences/bms/biochemistry/brownfield_lab/riley_proj
+
+source ~/miniforge3/bin/activate
+conda activate /projects/health_sciences/bms/biochemistry/brownfield_lab/conda_envs/rna_seq
+
+mkdir featurecounts
+
+#convert to gtf to be able to get gene level and not transcript level counts
+conda install -c bioconda gffread
+gffread genome.files/v3.2.gff3 -T -o genome.files/v3.2.gtf
+
+#run feature counts
+featureCounts -a genome.files/v3.2.gtf \
+              -o featurecounts/jgi.counts.txt \
+              -T 8 \
+              -t exon \
+              -g gene_id \
+              BAM/*.bam

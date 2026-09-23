@@ -1,0 +1,56 @@
+Initial directory: /projects/health_sciences/bms/biochemistry/brownfield_lab/riley_proj
+
+
+#load conda
+source ~/miniforge3/bin/activate
+conda activate /projects/health_sciences/bms/biochemistry/brownfield_lab/conda_envs/rna_seq
+
+mkdir BAM
+
+conda install -c bioconda samtools
+conda install -c bioconda star
+STAR --version
+2.7.11b
+
+#build index
+STAR --runMode genomeGenerate \
+     --genomeDir genome.files \
+     --genomeFastaFiles genome.files/v3.2.fa \
+     --sjdbGTFfile genome.files/v3.2.gff3 \
+     --sjdbOverhang 99 \
+     --genomeSAindexNbases 13 \
+     --runThreadN 8
+
+#align fastq to get sorted BAM
+for f in fastq/*.fastq.gz; do
+    sample=$(basename "$f" .fastq.gz)
+    STAR --runMode alignReads \
+         --genomeDir genome.files \
+         --readFilesIn "$f" \
+         --readFilesCommand zcat \
+         --outSAMtype BAM SortedByCoordinate \
+         --outFileNamePrefix BAM/"${sample}"_ \
+         --runThreadN 8
+done
+
+#index BAMs
+for b in BAM/*_Aligned.sortedByCoord.out.bam; do samtools index "$b"; done
+
+#remove unneded files
+find BAM -type d -name "*_STARtmp" -exec rm -rf {} +
+rm -f BAM/*_Log.out BAM/*_Log.progress.out
+
+
+
+#rename files to sample.bam and sample.bam.bai
+cd BAM
+for f in *_Aligned.sortedByCoord.out.bam; do
+    sample=$(basename "$f" _Aligned.sortedByCoord.out.bam)
+    mv "$f" "${sample}.bam"
+done
+
+
+for f in *_Aligned.sortedByCoord.out.bam.bai; do
+    sample=$(basename "$f" _Aligned.sortedByCoord.out.bam.bai)
+    mv "$f" "${sample}.bam.bai"
+done

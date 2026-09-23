@@ -1,0 +1,31 @@
+Initial directory: /projects/health_sciences/bms/biochemistry/brownfield_lab/riley_proj
+
+#set wd
+mkdir genome.files
+cd /projects/health_sciences/bms/biochemistry/brownfield_lab/riley_proj/genome.files
+
+#load conda
+source ~/miniforge3/bin/activate
+conda activate /projects/health_sciences/bms/biochemistry/brownfield_lab/conda_envs/rna_seq
+
+#download .fa and .gff3 from JGI
+curl --cookie jgi_session=/api/sessions/211c0017586f438e78c97bdc5acaecc8 --output download.20260706.165032.zip -d "{\"ids\":{\"Phytozome-556\":{\"file_ids\":[\"5e18c782e08d44553ef72215\",\"5e18c782e08d44553ef72210\"],\"top_hit\":\"5e18c782e08d44553ef72208\"}},\"api_version\":\"2\"}" -H "Content-Type: application/json" https://files-download.jgi.doe.gov/filedownload/
+
+#unzip files
+unzip download.20260706.165032.zip
+
+#delete .zip
+rm download.20260706.165032.zip
+
+#move .gff3.gz and .fa.gz out of nested subfolder into currect directory and unzip
+find Phytozome -type f -name "*.gff3.gz" -exec mv -t . {} +
+find Phytozome -type f -name "*.fa.gz" -exec mv -t . {} +
+rm -r Phytozome
+
+gunzip Bdistachyon_556_v3.2.gene_exons.gff3.gz 
+gunzip Bdistachyon_556_v3.0.fa.gz
+
+#rename files
+mv Bdistachyon_556_v3.2.gene_exons.gff3 v3.2.gff3
+mv Bdistachyon_556_v3.0.fa v3.2.fa
+

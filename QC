@@ -1,0 +1,18 @@
+Initial directory: /projects/health_sciences/bms/biochemistry/brownfield_lab/riley_proj
+
+#install conda
+wget https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-Linux-x86_64.sh
+bash Miniforge3-Linux-x86_64.sh -b -u
+
+#load preexisting environment
+$ source ~/miniforge3/bin/activate
+$ conda activate /projects/health_sciences/bms/biochemistry/brownfield_lab/conda_envs/rna_seq
+
+#fastqc (fastq files pre-downloaded in fastq dir)
+mkdir fastqc
+fastqc fastq/*.fastq.gz --outdir fastqc
+
+#multiqc
+$ conda install multiqc
+$ multiqc fastqc
+/// MultiQC 🔍 v1.33
